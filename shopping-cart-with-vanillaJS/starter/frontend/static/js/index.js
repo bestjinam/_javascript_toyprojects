@@ -1,4 +1,5 @@
 import Home from "./Home.js";
+import CartHelper from "./helper/CartHelper.js";
 
 const container = document.getElementById('container');
 
@@ -22,7 +23,7 @@ const route = event => {
     }
 }
 
-function generateNavbarHtml(){
+function generateNavbarHtml(cartItemCount){
     return `
         <nav class="navbar shadow-sm sticky-top">
             <div class="container">
@@ -30,7 +31,7 @@ function generateNavbarHtml(){
                 <a href="/cart" data-link id="cart-route" onclick="route()">
                     <div class="ms-auto" id="cart" style="text-decoration: none; color : black">
                     <i style="font-size: 20px" class="fa-solid fa-cart-shopping"></i>
-                    <span class="cartItem"id="nav-cart-item">0</span>
+                    <span class="cartItem"id="nav-cart-item">${cartItemCount}</span>
                     </div>
                 </a>
             </div>
@@ -40,11 +41,14 @@ function generateNavbarHtml(){
 
 
 function loadNavbar(){
-    container.innerHTML = generateNavbarHtml();
+    container.innerHTML = generateNavbarHtml(CartHelper.getCartItemCount);
 }
 
 function loadPage(){
     loadNavbar();
+    if (!localStorage.getItem('cart')) {
+        localStorage.setItem('cart', JSON.stringify([]));
+    }
     if (location.pathname === '/'){
         new Home('container');
     }
