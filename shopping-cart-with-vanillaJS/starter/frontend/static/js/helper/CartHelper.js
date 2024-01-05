@@ -33,11 +33,114 @@ export default class CartHelper {
         this.updateNavCartValue = this.getCartItemCount;
 
         //in the cart page it should update it's own item count
-
+        if (location.pathname === '/cart'){
+            cart = this.getCart;
+            const updatedItem = cart.find(item => item.id === product.id);
+            const totalPrice = this.getCartItemPrice(updatedItem.price, updatedItem.amount);
+            this.updateCartItemPrice(totalPrice, product.id);
+            document.getElementById(product.id).value = updatedItem.amount;
+        }
     }
 
+    static getCartItemPrice(price, amount) {
+        return (price * amount).toFixed(2);
+    }
+
+    static updateCartItemPrice(totalPrice, id) {
+        document.getElementById(`price-${id}`).innerText = `$${totalPrice}`;
+        this.updateCartTotalPrice(this.calcTotalPrice());
+
+    } 
     static set updateNavCartValue(value) {
         const cart = document.getElementById('nav-cart-item');
         cart.innerHTML = value;
     }
+
+    static calcTotalPrice() {
+        return this.getCart.reduce((ack, item) => (item.amount * item.price) + ack, 0).toFixed(2);
+    }
+
+    static remove(id) {
+        document.getElementById(`item-${id}`).remove();
+        this.setCart = this.getCart.filter(item => item.id !== id);
+
+        this.updateNavCartValue = this.getCartItemCount;
+        this.updateCartTotalPrice(this.calcTotalPrice());
+    }
+
+    static updateCartTotalPrice(totalPrice) {
+        document.getElementById('cart-total-price').innerText = `$${totalPrice}`; 
+    }
+
+
+    static removeItemFromCart(id) {
+        let cart = this.getCart;
+        let stop = false;
+        cart = cart.reduce((ack, item) => {
+            if (item.id === id) {
+                if (item.amount === 1) {
+                    // when product has amount of 1 break this fn
+                    stop = true;
+                    return ack;
+                }
+                return [...ack, { ... item, amount : item.amount - 1 }];
+            } else {
+                return [...ack, item];
+            }
+        }, []);
+
+        if (stop === true) {
+            return;
+        }
+
+        // set updated cart to localStorage
+        this.setCart = cart;
+
+        // update navbar cart item count
+        this.updateNavCartValue = this.getCartItemCount;
+
+        // In the cart page it should update it's own item count and item
+        if (location.pathname === '/cart') {
+            const updatedItem = cart.find(item => item.id === id);
+            if (updatedItem) {
+                document.getElementById(id).value = updatedItem.amount;
+                const totalPrice = this.getCartItemPrice(updatedItem.price, updatedItem.amount);
+                this.updateCartItemPrice(totalPrice, id);
+            }
+            return;
+        }
+    }
+
+    // static removeItemFromCart(id) {
+    //     let cart = this.getCart;
+    //     let stop = false;
+    //     cart = cart.reduce((ack, item) => {
+    //         if (item.id === id) {
+    //             if (item.amount === 1) {
+    //                 stop = true;
+    //                 return ack;
+    //             }
+    //             return [ ...ack, { ... item, amount : item.amount - 1 }];
+    //         } else {
+    //             return [ ...ack, item];
+    //         }
+    //     }, []);
+
+    //     if (stop === true) {
+    //         return ;
+    //     }
+
+    //     this.setCart = cart;
+        
+    //     this.updateNavCartValue = this.getCartItemCount;
+    //     if (location.pathname === '/cart') {
+    //         const updatedItem = cart.find(item => item.id === id);
+    //         if (updatedItem) {
+    //             document.getElementById(id).value = updatedItem.amount;
+    //             const totalPrice = this.getCartItemPrice(updatedItem.price, updatedItem.amount);
+    //             this.updateCartItemPrice(totalPrice, id);
+    //         }
+    //         return ;
+    //     }
+    // }
 }
