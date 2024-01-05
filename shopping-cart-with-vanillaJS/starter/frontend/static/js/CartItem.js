@@ -31,7 +31,7 @@ export default class CartItem {
                     <i class="fa-sharp fa-solid fa-plus"></i>
                 </button>
                 <input class="item-count" type="text" name="name" value="${this.amount}" id="${this.id}" readonly>
-                <button class="minus-btn" type="button" name="button" data-product-id="productId">
+                <button class="minus-btn" type="button" name="button" data-product-id="${this.id}">
                     <i class="fa-solid fa-minus"></i>
                 </button>
             </div>
