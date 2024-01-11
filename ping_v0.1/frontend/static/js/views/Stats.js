@@ -1,8 +1,8 @@
 import AbstractView from "./AbstractView.js";
 
 export default class Stats extends AbstractView {
-    constructor () {
-        super ();
+    constructor (params) {
+        super (params);
         this.setTitle("Stats");
     }
 
